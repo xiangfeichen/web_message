@@ -4,17 +4,17 @@
 
 ## 功能特性
 
-- 用户可以提交留言（包括内容和邮箱）
-- 实时显示历史留言列表
-- 显示留言时间（智能格式化）
-- 响应式设计，支持移动端
-- 基于 Cloudflare D1 数据库存储
-- 防 XSS 攻击
-- 表单验证（邮箱格式、内容长度限制）
+- **留言提交**: 用户可以提交留言，包含名字和内容。
+- **图片上传**: 支持上传图片或直接调用摄像头拍照上传。
+- **分页显示**: 留言列表分页显示，每页 10 条留言。
+- **留言删除**: 支持删除特定的留言。
+- **智能时间**: 显示留言的创建时间（格式化为 YYYY-MM-DD HH:mm:ss）。
+- **数据存储**: 基于 Cloudflare D1 数据库存储文本和图片数据。
+- **安全防护**: 防 XSS 攻击，内容长度限制，图片大小限制。
 
 ## 技术栈
 
-- **前端**: HTML + CSS + JavaScript
+- **前端**: HTML + CSS (Tailwind CSS CDN) + JavaScript
 - **后端**: Cloudflare Workers
 - **数据库**: Cloudflare D1 (SQLite)
 - **部署**: Cloudflare Workers
@@ -24,19 +24,19 @@
 ```
 web_message/
 ├── src/
-│   └── index.js        # Cloudflare Workers 主文件
+│   └── index.js        # Cloudflare Workers 主文件 (后端逻辑)
 ├── index.html          # 前端页面
 ├── schema.sql          # 数据库表结构
-├── wrangler.toml       # Cloudflare Workers 配置
+├── wrangler.toml       # Cloudflare Workers 配置文件
 ├── package.json        # 项目依赖配置
 └── README.md           # 说明文档
 ```
 
 ## 部署步骤
 
-### 1. 安装依赖
+### 1. 环境准备
 
-首先确保你已经安装了 Node.js (推荐 18.x 或更高版本)。
+确保你已经安装了 Node.js (推荐 18.x 或更高版本)。
 
 ```bash
 npm install
@@ -45,31 +45,21 @@ npm install
 ### 2. 登录 Cloudflare
 
 ```bash
-wrangler login
+npx wrangler login
 ```
-
 这会打开浏览器让你登录到 Cloudflare 账户。
 
 ### 3. 创建 D1 数据库
 
 ```bash
-wrangler d1 create message-board-db
+npx wrangler d1 create message-board-db
 ```
 
-执行后，命令会返回数据库的 ID，类似：
+执行后，命令会返回数据库的 ID，请记录下这个 ID。
 
-```
-✅ Successfully created DB 'message-board-db'
+### 4. 配置 wrangler.toml
 
-[[d1_databases]]
-binding = "DB"
-database_name = "message-board-db"
-database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-```
-
-### 4. 更新 wrangler.toml
-
-将上一步获得的 `database_id` 复制到 `wrangler.toml` 文件中，替换 `YOUR_DATABASE_ID`：
+打开 `wrangler.toml` 文件，将 `database_id` 替换为上一步生成的 ID：
 
 ```toml
 [[d1_databases]]
@@ -78,22 +68,22 @@ database_name = "message-board-db"
 database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # 替换为实际的 ID
 ```
 
-### 5. 初始化数据库表结构
+### 5. 初始化数据库
 
-执行 SQL 脚本创建数据库表：
+执行 SQL 脚本创建数据库表（包含留言表结构）：
 
+**本地开发环境：**
 ```bash
-wrangler d1 execute message-board-db --remote --file=./schema.sql
-
-// 或本地
-wrangler d1 execute message-board-db --local --file=./schema.sql
+npm run d1:init:local
+# 或者
+npx wrangler d1 execute message-board-db --local --file=./schema.sql
 ```
 
-你应该看到类似输出：
-
-```
-🌀 Executing on message-board-db (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx):
-🚣 Executed 2 commands in 0.123ms
+**生产环境（Cloudflare）：**
+```bash
+npm run d1:init
+# 或者
+npx wrangler d1 execute message-board-db --remote --file=./schema.sql
 ```
 
 ### 6. 本地开发测试
@@ -103,13 +93,6 @@ wrangler d1 execute message-board-db --local --file=./schema.sql
 ```bash
 npm run dev
 ```
-
-或者：
-
-```bash
-npx wrangler dev
-```
-
 访问 `http://localhost:8787` 查看应用。
 
 ### 7. 部署到 Cloudflare
@@ -118,18 +101,7 @@ npx wrangler dev
 npm run deploy
 ```
 
-或者：
-
-```bash
-wrangler deploy
-```
-
-部署成功后，你会看到应用的 URL，类似：
-
-```
-Published web-message-board (0.12 sec)
-  https://web-message-board.your-account.workers.dev
-```
+部署成功后，控制台会输出应用的访问 URL。
 
 ## 常用命令
 
@@ -140,85 +112,43 @@ npm run dev
 # 部署到生产环境
 npm run deploy
 
-# 查询数据库
-npx wrangler d1 execute message-board-db --command "SELECT * FROM messages"
+# 初始化远程数据库
+npm run d1:init
 
-# 清空留言（谨慎使用）
-npx wrangler d1 execute message-board-db --command "DELETE FROM messages"
-```
+# 初始化本地数据库
+npm run d1:init:local
 
-## 数据库管理
+# 查询远程数据库
+npm run d1:query -- "SELECT * FROM messages"
 
-### 查看所有留言
-
-```bash
-npx wrangler d1 execute message-board-db --command "SELECT * FROM messages ORDER BY created_at DESC"
-```
-
-### 删除特定留言
-
-```bash
-npx wrangler d1 execute message-board-db --command "DELETE FROM messages WHERE id = 1"
-```
-
-### 查看留言数量
-
-```bash
-npx wrangler d1 execute message-board-db --command "SELECT COUNT(*) as total FROM messages"
+# 查询本地数据库
+npm run d1:query:local -- "SELECT * FROM messages"
 ```
 
 ## 自定义配置
 
-### 修改项目名称
+### 修改每页显示数量
 
-在 `wrangler.toml` 中修改 `name` 字段：
-
-```toml
-name = "your-custom-name"
-```
-
-### 修改留言限制
-
-在 `src/index.js` 中修改：
+在 `src/index.js` 中修改 `limit` 变量：
 
 ```javascript
-// 内容长度限制（默认 1000 字符）
-if (content.length > 1000) {
+const limit = 10; // 修改为你想要的数量
+```
+
+### 修改图片大小限制
+
+在 `src/index.js` 中修改大小判断逻辑：
+
+```javascript
+if (imageFile.size > 5 * 1024 * 1024) { // 5MB limit
   // ...
 }
-
-// 留言列表数量限制（默认 100 条）
-SELECT ... LIMIT 100
 ```
 
-## 安全说明
+## 注意事项
 
-- 所有用户输入都经过 HTML 转义，防止 XSS 攻击
-- 邮箱格式验证
-- 内容长度限制
-- CORS 已配置，允许跨域访问
-
-## 故障排除
-
-### 数据库连接错误
-
-确保 `wrangler.toml` 中的 `database_id` 正确。
-
-### 部署失败
-
-检查是否已登录：
-
-```bash
-npx wrangler whoami
-```
-
-### 本地开发数据库问题
-
-本地开发时，Wrangler 会自动创建本地数据库。如果遇到问题，确保已执行 schema.sql：
-
-```bash
-npx wrangler d1 execute message-board-db --local --file=./schema.sql
-```
+- **图片存储**: 图片目前直接以 BLOB 形式存储在 D1 数据库中。对于大量或大尺寸图片，建议迁移到 Cloudflare R2 存储。
+- **安全性**: 虽然有基本的防 XSS 和验证，但在生产环境中建议增加更严格的限流和验证机制。
 
 ## License
 

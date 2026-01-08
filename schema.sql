@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     content TEXT NOT NULL,
     email TEXT NOT NULL,
+    image_data BLOB,
+    image_type TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
