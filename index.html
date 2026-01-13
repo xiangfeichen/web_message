@@ -5,12 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线留言板</title>
-
-    <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script>
-        /* Tailwind 配置：扩展颜色变量，便于在页面中使用自定义颜色名 */
         tailwind.config = {
             theme: {
                 extend: {
@@ -29,7 +25,7 @@
 
 <body class="min-h-screen bg-fb-bg p-4 md:p-8">
     <div class="max-w-4xl mx-auto">
-        <!-- 页面顶部：标题与副标题 -->
+        <!-- 标题 -->
         <div class="text-center mb-6">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                 在线留言板
@@ -37,53 +33,42 @@
             <p class="text-fb-gray text-sm md:text-base">分享你的想法和反馈</p>
         </div>
 
-        <!-- 留言表单：用户输入留言内容、名字、可选图片并提交 -->
+        <!-- 留言表单 -->
         <div class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-4">
-            <!-- 用于显示操作结果通知（成功或错误信息） -->
             <div id="notification"></div>
-
             <form id="messageForm" class="space-y-4">
                 <div>
                     <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
                         留言内容
                     </label>
                     <textarea id="content" name="content" required rows="4" placeholder="分享你的想法..."
-                        class="w-full px-3 py-2 border border-fb-gray-light rounded-lg bg-fb-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-fb-blue focus:border-transparent transition-al[...]
+                        class="w-full px-3 py-2 border border-fb-gray-light rounded-lg bg-fb-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-fb-blue focus:border-transparent transition-all resize-none"></textarea>
                 </div>
-
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                         名字
                     </label>
                     <input type="text" id="name" name="name" required placeholder="你的名字"
-                        class="w-full px-3 py-2 border border-fb-gray-light rounded-lg bg-fb-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-fb-blue focus:border-transparent transition-al[...]
+                        class="w-full px-3 py-2 border border-fb-gray-light rounded-lg bg-fb-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-fb-blue focus:border-transparent transition-all">
                 </div>
-
                 <div>
                     <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
                         上传图片 (可选)
                     </label>
-
-                    <!-- 文件上传与预览：支持拍照或从相册选择（capture="environment"） -->
                     <div class="flex items-center gap-4">
                         <label
                             class="cursor-pointer bg-white border border-fb-gray-light hover:bg-gray-50 rounded-lg px-4 py-2 flex items-center gap-2 transition-colors">
-                            <!-- 上传图标 -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-fb-gray" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"[...]
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             <span class="text-sm text-gray-700">拍照/上传</span>
-
-                            <!-- 文件输入：隐藏，选择文件后会调用 previewImage 函数显示预览 -->
                             <input type="file" id="image" name="image" accept="image/*" capture="environment"
                                 class="hidden" onchange="previewImage(this)">
                         </label>
-
-                        <!-- 图片预览区域（默认隐藏），选择图片后显示缩略图并可清除 -->
                         <div id="imagePreview" class="hidden relative">
                             <img id="previewImg" src="" alt="Preview"
                                 class="h-16 w-16 object-cover rounded-lg border border-fb-gray-light">
@@ -92,15 +77,13 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
-                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L[...]
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                                         clip-rule="evenodd" />
                                 </svg>
                             </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- 提交按钮：在提交过程中会设置 disabled，并改变文��提示 -->
                 <button type="submit"
                     class="w-full bg-fb-blue hover:bg-fb-blue-dark text-white font-semibold py-2.5 px-4 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                     发送留言
@@ -108,27 +91,25 @@
             </form>
         </div>
 
-        <!-- 历史留言列表区域：展示所有留言，以及分页控件 -->
+        <!-- 历史留言列表 -->
         <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
             <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4">
                 所有留言
             </h2>
             <div id="messagesList">
-                <!-- 初始提示：加载中 -->
                 <div class="text-center text-fb-gray py-8">加载中...</div>
             </div>
-
-            <!-- 分页控件（隐藏或显示由 JS 控制） -->
+            <!-- 分页控件 -->
             <div id="pagination" class="hidden flex justify-center items-center gap-4 mt-6">
                 <button id="prevBtn" onclick="changePage(-1)"
-                    class="px-4 py-2 bg-white border border-fb-gray-light rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-color[...]
+                    class="px-4 py-2 bg-white border border-fb-gray-light rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     上一页
                 </button>
                 <span id="pageInfo" class="text-sm text-fb-gray">
                     第 1 页 / 共 1 页
                 </span>
                 <button id="nextBtn" onclick="changePage(1)"
-                    class="px-4 py-2 bg-white border border-fb-gray-light rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-color[...]
+                    class="px-4 py-2 bg-white border border-fb-gray-light rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     下一页
                 </button>
             </div>
@@ -136,21 +117,13 @@
     </div>
 
     <script>
-        /* ========= 全局配置与状态 ========= */
-        // 后端 API 根路径，页面通过此地址与后端交互（GET 列表、POST 新留言、DELETE 删除）
         const API_URL = '/api';
 
-        // 当前页与总页数（用于分页 UI）
+
         let currentPage = 1;
         let totalPages = 1;
 
-        /* ========= 加载留言列表：从后端获取数据并渲染 =========
-           说明：
-           - 请求：GET /api/messages?page=N
-           - 处理返回的 data.messages（数组）与 data.pagination（分页信息）
-           - 渲染每条留言的内容、图片、作者、创建时间
-           - 当没有留言时显示“暂无留言”的提示
-        */
+        // 加载留言列表
         async function loadMessages(page = 1) {
             try {
                 const response = await fetch(`${API_URL}/messages?page=${page}`);
@@ -159,30 +132,28 @@
                 const messagesList = document.getElementById('messagesList');
                 const pagination = document.getElementById('pagination');
 
-                // 如果没有留言，显示空状态，并隐藏分页
                 if (!data.messages || data.messages.length === 0) {
                     messagesList.innerHTML = '<div class="text-center text-fb-gray py-12 text-sm">暂无留言，成为第一个留言的人吧！</div>';
                     pagination.classList.add('hidden');
                     return;
                 }
 
-                // 更新分页状态（如果后端���回了 pagination）
+                // 更新分页状态
                 if (data.pagination) {
                     currentPage = data.pagination.page;
                     totalPages = data.pagination.totalPages;
                     updatePaginationUI();
                 }
 
-                // 将 messages 列表映射为 HTML 字符串并插入页面
                 messagesList.innerHTML = data.messages.map(msg => `
                     <div class="bg-fb-bg rounded-lg p-4 mb-3 hover:bg-gray-100 transition-colors group relative">
-                        <button onclick="deleteMessage(${msg.id})" class="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" title="删��[...]
+                        <button onclick="deleteMessage(${msg.id})" class="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" title="删除留言">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v[...]
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                             </svg>
                         </button>
                         <div class="text-gray-900 text-base mb-2 leading-relaxed pr-8">${escapeHtml(msg.content)}</div>
-                        ${msg.imageUrl ? `<div class="mb-2"><img src="${msg.imageUrl}" alt="Uploaded image" class="max-h-64 rounded-lg border border-fb-gray-light cursor-pointer" onclick="window.open([...]
+                        ${msg.imageUrl ? `<div class="mb-2"><img src="${msg.imageUrl}" alt="Uploaded image" class="max-h-64 rounded-lg border border-fb-gray-light cursor-pointer" onclick="window.open(this.src, '_blank')"></div>` : ''}
                         <div class="flex flex-wrap items-center gap-2 text-xs text-fb-gray">
                             <span class="font-medium">${escapeHtml(msg.email)}</span>
                             <span>·</span>
@@ -191,19 +162,13 @@
                     </div>
                 `).join('');
             } catch (error) {
-                // 请求或渲染失败时显示错误提示
                 console.error('加载留言失败:', error);
                 document.getElementById('messagesList').innerHTML =
                     '<div class="bg-red-50 text-red-600 p-3 rounded-lg text-sm">加载留言失败，请刷新页面重试</div>';
             }
         }
 
-        /* ========= 表单提交：发送新留言 =========
-           说明：
-           - 通过 FormData 支持包含图片的 multipart/form-data 提交
-           - 提交期间按钮变为不可用并显示“发送中...”
-           - 成功后清空表单、清除图片预览并刷新第一页留言列表
-        */
+        // 提交留言
         document.getElementById('messageForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -233,7 +198,6 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // 成功提示并重置表单、刷新留言（跳回第一页）
                     notification.innerHTML = '<div class="bg-green-50 text-green-700 p-3 rounded-lg mb-4 text-sm font-medium">留言发送成功！</div>';
                     document.getElementById('messageForm').reset();
                     clearImage();
@@ -244,7 +208,6 @@
                         notification.innerHTML = '';
                     }, 3000);
                 } else {
-                    // 后端返回错误时显示错误消息
                     notification.innerHTML = `<div class="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm font-medium">${data.error || '发送失败，请重试'}</div>`;
                 }
             } catch (error) {
@@ -256,16 +219,14 @@
             }
         });
 
-        /* ========= 辅助函数 ========= */
-
-        // HTML 转义，防止直接插入未转义的用户输入造成 XSS
+        // HTML转义，防止XSS
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // 将日期字符串格式化为 "yyyy-mm-dd hh:mm:ss"
+        // 格式化日期为 yyyy-mm-dd hh:mm:ss 格式
         function formatDate(dateString) {
             const date = new Date(dateString);
             const year = date.getFullYear();
@@ -278,9 +239,6 @@
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
-        /* ========= 图片预览相关 ========= */
-
-        // 用户选择图片后，读取文件并展示在页面上（缩略图）
         function previewImage(input) {
             const preview = document.getElementById('imagePreview');
             const previewImg = document.getElementById('previewImg');
@@ -297,7 +255,6 @@
             }
         }
 
-        // 清除文件输入与预览
         function clearImage() {
             const input = document.getElementById('image');
             const preview = document.getElementById('imagePreview');
@@ -308,12 +265,10 @@
             preview.classList.add('hidden');
         }
 
-        // 页面加载时获取第一页留言
+        // 页面加载时获取留言列表
         loadMessages(1);
 
-        /* ========= 分页控制 ========= */
-
-        // 根据 currentPage 和 totalPages 更新分页 UI（显示/隐藏按钮、显示页码）
+        // 分页控制
         function updatePaginationUI() {
             const pagination = document.getElementById('pagination');
             const prevBtn = document.getElementById('prevBtn');
@@ -332,7 +287,6 @@
             nextBtn.disabled = currentPage >= totalPages;
         }
 
-        // 翻页：传入 delta（-1 或 +1），验证新页码后调用 loadMessages
         function changePage(delta) {
             const newPage = currentPage + delta;
             if (newPage >= 1 && newPage <= totalPages) {
@@ -340,11 +294,7 @@
             }
         }
 
-        /* ========= 删除留言 =========
-           - 点击每条留言上的删除按钮会触发 deleteMessage(id)
-           - 先确认，发送 DELETE /api/messages/:id
-           - 成功后刷新当前页（若当前页删除后没有内容且不是第一页，跳转上一页）
-        */
+        // 删除留言
         async function deleteMessage(id) {
             if (!confirm('确定要删除这条留言吗？')) {
                 return;
